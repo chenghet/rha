@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="redisSentinelConfiguration"
+		class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
+
+		<property name="master">
+			<bean class="org.springframework.data.redis.connection.RedisNode">
+				<property name="name" value="${redis.master.name}"></property>
+			</bean>
+		</property>
+
+		<property name="sentinels">
+			<set>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.sentinal.node1.host}" />
+					<constructor-arg name="port">
+						<value>${redis.sentinal.node1.port}</value>
+					</constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.sentinal.node2.host}" />
+					<constructor-arg name="port">
+						<value>${redis.sentinal.node2.port}</value>
+					</constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.sentinal.node3.host}" />
+					<constructor-arg name="port">
+						<value>${redis.sentinal.node3.port}</value>
+					</constructor-arg>
+				</bean>
+			</set>
+		</property>
+	</bean>
+
+	<!-- redis -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="100" />
+		<property name="maxIdle" value="20" />
+		<property name="timeBetweenEvictionRunsMillis" value="30000" />
+		<property name="minEvictableIdleTimeMillis" value="30000" />
+		<property name="testOnBorrow" value="false" />
+	</bean>
+
+	<bean id="jedisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		destroy-method="destroy">
+		<constructor-arg>
+			<ref bean="redisSentinelConfiguration" />
+		</constructor-arg>
+		<property name="password" value="${redis.password}"></property>
+		<property name="poolConfig" ref="jedisPoolConfig" />
+		<property name="timeout" value="5000"></property>
+		<property name="usePool" value="true"></property>
+	</bean>
+
+	<!-- 直连 -->
+	<!-- <bean id="jedisConnectionFactory" -->
+	<!-- class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" -->
+	<!-- destroy-method="destroy"> -->
+	<!-- <property name="poolConfig" ref="jedisPoolConfig" /> -->
+	<!-- <property name="hostName"> -->
+	<!-- <value>115.239.208.149</value> -->
+	<!-- </property> -->
+	<!-- <property name="port"> -->
+	<!-- <value>6991</value> -->
+	<!-- </property> -->
+	<!-- <property name="password"> -->
+	<!-- <value>6f7243beb66ca8c2</value> -->
+	<!-- </property> -->
+	<!-- <property name="timeout" value="15000"></property> -->
+	<!-- <property name="usePool" value="true"></property> -->
+	<!-- </bean> -->
+
+	<bean id="jedisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="jedisConnectionFactory"></property>
+		<property name="keySerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="valueSerializer">
+			<!--<bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />-->
+			<bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
+		</property>
+	</bean>
+
+	<bean id="sRedisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="jedisConnectionFactory"></property>
+		<property name="keySerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="valueSerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="hashKeySerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="hashValueSerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+	</bean>
+
+	<bean id="cacheService" class="com.dianwoba.rha.service.CacheService">
+		<property name="redisTemplate" ref="jedisTemplate" />
+		<property name="sRedisTemplate" ref="sRedisTemplate" />
+	</bean>
+
+</beans>
