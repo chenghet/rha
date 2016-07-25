@@ -22,7 +22,7 @@ public class TestAspect implements BeanSelfAware<TestAspect> {
 
 
     // 基础，订单取消
-    @TransactionBase(value = "txManager", types = {CompensableTransactionType.TX_ORDER_CANCEL_2_RIDER,
+    @TransactionBase(types = {CompensableTransactionType.TX_ORDER_CANCEL_2_RIDER,
             CompensableTransactionType.TX_ORDER_CANCEL_2_SHOP})
     public void innerCancel(@TransactionBizNo Long orderId) {
     }

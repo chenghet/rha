@@ -16,7 +16,7 @@ public class TestCoding {
                     public Object invoke() {
                         return null;
                     }
-                }, "txManager");
+                });
         // 远程，商家相关
         transactionTemplate.distributed("bizNo",
                 new CascadedInvocation<Object>(CompensableTransactionType.TX_ORDER_CANCEL_2_SHOP) {

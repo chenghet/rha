@@ -21,14 +21,11 @@ public class CompensableTransactionTemplate {
      * @param txManager
      * @return
      */
-    public <T> T basically(Object bizNo, BasicInvocation<T> basic, String txManager) {
-        PlatformTransactionManager tx = applicationContext.getBean(txManager, PlatformTransactionManager.class);
-        TransactionStatus transaction = tx.getTransaction(new DefaultTransactionDefinition());
+    public <T> T basically(Object bizNo, BasicInvocation<T> basic) {
         T ret;
         try {
             ret = basic.invoke();
             transactionCompensateHelper.preset(bizNo, basic.getTransactionTypes()); // 事务提交前，preset事务
-            tx.commit(transaction);
             try {
                 transactionCompensateHelper.commit(bizNo, basic.getTransactionTypes()); // 提交commit
             } catch (Throwable t) {
@@ -36,7 +33,6 @@ public class CompensableTransactionTemplate {
             }
         } catch (Throwable t) {
             transactionCompensateHelper.release(bizNo, basic.getTransactionTypes()); // 基础事务提交失败，回滚redis事务hold
-            tx.rollback(transaction);
             throw new RuntimeException(t);
         }
         return ret;

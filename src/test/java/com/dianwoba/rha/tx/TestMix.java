@@ -36,7 +36,7 @@ public class TestMix implements BeanSelfAware<TestMix> {
                 });
     }
 
-    @TransactionBase(value = "txManager", types = {CompensableTransactionType.TX_ORDER_CANCEL_2_RIDER,
+    @TransactionBase(types = {CompensableTransactionType.TX_ORDER_CANCEL_2_RIDER,
             CompensableTransactionType.TX_ORDER_CANCEL_2_SHOP})
     public void innerCancel(@TransactionBizNo Long orderId) {
         // do some thing
@@ -44,7 +44,6 @@ public class TestMix implements BeanSelfAware<TestMix> {
 
     private TestMix self;
 
-    @Override
     public void setSelf(TestMix self) {
         this.self = self;
     }

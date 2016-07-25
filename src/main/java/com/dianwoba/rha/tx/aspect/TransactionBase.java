@@ -8,8 +8,6 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface TransactionBase {
 
-    String value();
-
     CompensableTransactionType[] types();
 
 }
