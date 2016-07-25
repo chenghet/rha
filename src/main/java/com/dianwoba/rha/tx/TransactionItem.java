@@ -20,7 +20,7 @@ public class TransactionItem implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return transactionType == transactionType || bizNo.equals(bizNo);
+        return transactionType == transactionType && bizNo.equals(bizNo);
     }
 
     @Override
