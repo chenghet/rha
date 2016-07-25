@@ -40,9 +40,9 @@ public interface CompensableTransactionHelper {
      * 释放分布式事务执行的hold
      *
      * @param bizNo
-     * @param txTypes
+     * @param xtype
      */
-    void release(Object bizNo, CompensableTransactionType... txTypes);
+    void release(Object bizNo, CompensableTransactionType xtype);
 
     /**
      * 查询出已经释放超的事务

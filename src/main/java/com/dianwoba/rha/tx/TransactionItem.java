@@ -6,7 +6,7 @@ public class TransactionItem implements Serializable {
 
     private CompensableTransactionType transactionType;
     private Object bizNo;
-    private transient long timestamp;
+    private long timestamp;
 
     public TransactionItem(CompensableTransactionType transactionType, Object bizNo) {
        this(transactionType, bizNo, null);
@@ -15,7 +15,7 @@ public class TransactionItem implements Serializable {
     public TransactionItem(CompensableTransactionType transactionType, Object bizNo, Long timestamp) {
         this.transactionType = transactionType;
         this.bizNo = bizNo;
-        this.timestamp = timestamp == null ? System.currentTimeMillis() : timestamp;
+        this.timestamp = timestamp;
     }
 
     @Override
